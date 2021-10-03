@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+
+<html lang="fr">
+  <head>
+    <meta charset="utf-8">
+    <title>Blagues de Chuck Norris</title>
+    <link rel="stylesheet" type="text/css" href="res/css/style.css">
+  </head>
+  <body>
+    
+    <header>
+      <div class="container">
+        <img src="res/img/home.png" alt="logo" />
+        <span><h1>Blagues de Chuck Norris</h1></span>
+      </div>
+    </header>
+    
+    <section class="container console">
+      <div class="content console-content" id="user-disconnected">
+        <span id="console-error"></span>
+        <input id="user-email" type="email" name="email" placeholder="Entrez votre address e-mail"/>
+        <div>
+          <button id="login-btn">Connexion</button>
+        </div>
+      </div>
+      <div class="content console-content" id="user-connected" style="display: none;">
+        <span id="welcome-user"></span>
+        <div>
+          <button id="logout-btn">Déconnexion</button>
+        </div>
+      </div>
+    </section>
+    
+    <main class="container">
+      <nav class="content">
+        <button id="random-jokes">Blagues aléatoires</button>
+        <button id="my-jokes" disabled>Mes blagues préférées</button>
+        <button id="best-jokes" disabled>Meilleures blagues</button>
+        <button id="last-jokes">Nouvelles blagues</button>
+      </nav>
+      
+      <section class="content main-content">
+        <h1 id="main-title"></h1>
+        <div id="jokes"></div>
+      </section>
+    </main>
+    
+    <footer>
+      <div class="container">
+        <p>Jeremy Gobet</p>
+        <p>Blagues de Chuck Norris</p>
+        <p>Tous droits réservés HES-SO 2021</p>
+      </div>
+    </footer>
+
+    <script type="module" src="res/js/main.js"></script>
+  </body>
+</html>

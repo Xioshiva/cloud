@@ -1,0 +1,20 @@
+{
+  "name": "server",
+  "version": "1.0.0",
+  "description": "Server for Check Norris' jokes",
+  "main": "server.js",
+  "dependencies": {
+    "express": "^4.17.1"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node server.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://gitedu.hesge.ch/jeremy.gobet/app-et-archi-web-tp-2020"
+  },
+  "author": "Jeremy Gobet",
+  "license": "ISC"
+}
