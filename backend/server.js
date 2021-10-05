@@ -33,11 +33,6 @@ app.get('/api', function (request, response) {
     | POST       | classements/add                    |         | Ajoute des informations dans la base de données                      |
     | PUT        | classements/update                 |         | Modifie des informations de la base de données                       |
     | DELELTE    | classements/delete/*:type*/:limit? |  type   | Retire les "limit" derniers éléments présents dans le fichier "type" |
-    |:-----------|:-----------------------------------|:--------|:---------------------------------------------------------------------|
-    | GET        | succes/get/*:user*                 |  user   | Retourne un succes en fonction du "user"                             |
-    | POST       | succes/login                       |         | Permet de se connecter sur le site(sous reserve d'etre dans la liste)|
-    | PUT        | succes/add                         |         | Ajoute un succès dans la base de données (voir "user" du body)       |
-    | DELETE     | succes/logout                      |         | Permet de se deconnecter du site                                     |
     `);
 });
 
@@ -46,7 +41,7 @@ var dbLink = "http://localhost:8081";
 
 /* NOTES SUR LE PROJET:
  *   n'ayant pas fait de login pour la partie front, on a improvisé quelque chose en vitesse donc il n'est pas possible d'ajouter des utilisateurs
- *   les parties du frontend qui communiquent avec le backend sont les fichiers classement.js et succes.js
+ *   les parties du frontend qui communiquent avec le backend sont le fichiers classement.js
  *   la base de données est composée de fichiers json (voir backend/db) sur lesquels on peut appliquer toutes les propriétés CRUD
  *   le code qui permet d'interagir avec la base de données se situe dans backend/modules/database.js
  */
@@ -140,10 +135,6 @@ app.delete('/api/classements/delete/:type/:limit?', (request, response) => {
     response.status(400).end();
 });
 
-// A TON TOUR DORIAN LA ZONE
-// commentaires dans ce fichier + dans le fichier succes.js + readme (ligne 124)
-// ajouter la gestion des code de retour comme dans le fichier classements.js
-// touche pas trop aux classements stp ou en tout cas appuie pas sur supprimer
 let users = {
     content: [
         { username: "Thomas", password: "1234" },
@@ -173,61 +164,3 @@ function authJwtToken(req, res, next) {
         next();
     });
 }
-
-/* Permet d'ajouter un succes dans la liste correspondante à l'utilisateur
- * valeurs de retour: -> next() (OK)
- *                    -> 401 (Unauthorized) 
- *                    -> 400 (Bad Request) 
- */
-app.put('/api/succes/add', authJwtToken, (request, response) => {
-    if (request.body !== undefined) {
-        fetch(dbLink + "/api/succes/add", request);
-        response.status(404).end();
-    } else {
-        response.status(400).end();
-    }
-});
-
-/* Permet d'obtenir les succes correspondant à l'utilisateur 
- * valeurs de retour: -> 200 (OK)
- *                    -> 400 (Bad Request) 
- */
-app.get('/api/succes/get/:user', authJwtToken, (request, response) => {
-    if (request.params.user !== undefined) {
-        fetch(dbLink + "/api/succes/get/" + request.params.user, request).then(res => response.status(200).json(res));
-    } else {
-        response.status(400).end();
-    }
-});
-
-/* Permet de se deconnecter du serveur et donc empêche l'envoie de succès
- * si le token envoyé ne correspond pas à celui enregistré on ne fait rien
- * valeurs de retour: -> 204 (OK)
- *                    -> 405 (Method not allow) 
- */
-app.delete('/api/succes/logout', (request, response) => {
-    tokenSave = ''
-    response.sendStatus(204);
-})
-
-/* Permet de se connecter au serveur si les identifiants envoyé par le client
- * corresponde à ceux enregistrer dans la base de données
- * valeurs de retour: -> 204 (OK)
- *                    -> 403 (Forbidden) Le client n'a pas les droits d'accès 
- */
-app.post('/api/succes/login', (request, response) => {
-
-    for (let i = 0; i < users.content.length; i++) {
-        if (request.body.username == users.content[i].username && request.body.password == users.content[i].password) {
-            const username = request.body.username;
-            const user = { name: username };
-            // Le token exprire dans 5 minutes
-            const accessToken = jwt.sign(user, process.env.ACCESS_TOKEN_SECRET, { expiresIn: '5m' });
-            tokenSave = accessToken
-            response.status(200).json({ accessToken: accessToken }).end();
-
-        }
-    }
-    response.status(403).end()
-
-});
