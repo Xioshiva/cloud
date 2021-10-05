@@ -21,7 +21,6 @@ async function update(index){
     let content;
     // en fonction de la valeur on récupère les infos dans la db
     // à différents endroits*
-    console.log("caca \n")
     switch(index){
         case 2: 
             content = await getContentClassement2();
@@ -37,7 +36,7 @@ async function update(index){
             break;
     }
     // on affiche le contenu retourné sur la page
-    
+    console.log("test");
     console.log(content[0]);
     var text1 = document.getElementById('text1');
     text1.innerHTML = content[0];
@@ -55,7 +54,6 @@ async function getContentClassement1(){
     document.getElementById('podium2').style.display = "none";
     document.getElementById('podium3').style.display = "none";
     document.getElementById('podium4').style.display = "none";
-
     let array;
     // on indique vouloir faire le get sur les délais et on veut 4 valeurs
     await fetch('//localhost:8080/api/classements/delay/4',
@@ -92,6 +90,8 @@ async function getContentClassement2(){
     document.getElementById('podium4').style.display = "none";
 
     let array;
+    console.log("lol");
+
     await fetch('//localhost:8080/api/classements/excuses/4',
     {
         headers : myHeader,
@@ -108,6 +108,9 @@ async function getContentClassement2(){
             status.innerHTML = "";
         }
     });
+
+    console.log("ixdé");
+    
 
     var output = [];
     

@@ -3,14 +3,17 @@
 require('dotenv').config()
 
 const express = require('express');
-const db = require('./modules/database');
 const fs = require('fs');
 const bodyParser = require('body-parser');
 const jwt = require('jsonwebtoken');
 const { type } = require('os');
+const cors = require('cors');
 
 let app = express();
-app.use(express.static('../frontend'));
+
+app.use(cors);
+app.options('*', cors());
+
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({
   extended: true
@@ -19,6 +22,7 @@ app.listen(8080);
 console.log('Server started');
 
 app.get('/api', function(request, response) {
+    console.log("haha");
     response.setHeader('Content-Type', 'text/plain');
     response.send(`
     Voici l'API REST CRUD de Dorian et Thomas exposée par le backend sur /api/
@@ -37,6 +41,10 @@ app.get('/api', function(request, response) {
     `);
 });
 
+
+var dbLink = "localhost:8081";
+
+console.log("lol");
 /* NOTES SUR LE PROJET:
  *   n'ayant pas fait de login pour la partie front, on a improvisé quelque chose en vitesse donc il n'est pas possible d'ajouter des utilisateurs
  *   les parties du frontend qui communiquent avec le backend sont les fichiers classement.js et succes.js
@@ -53,10 +61,10 @@ app.get('/api', function(request, response) {
  *                    -> 400 (Bad Request) 
  */
 app.get('/api/classements/:type/:limit?', (request, response) => {
+    console.log("lol");
     if(request.params.type !== undefined){
-        const limit = request.params.limit ? request.params.limit : 4;
-        console.log(db.get(limit, request.params.type));
-        response.status(200).json(db.get(limit, request.params.type));
+        fetch(dbLink + "/api/classements/:type/:limit?", request).then( res => response.status(200).json(res));
+        
     } else{
         response.status(400).end();
     }
@@ -71,10 +79,7 @@ app.get('/api/classements/:type/:limit?', (request, response) => {
  */
 app.post('/api/classements/add', (request, response) => {
     if(request.body.content !== undefined && request.body.type){
-        if(db.add(request.body.content[0].key, request.body.content[0].value, request.body.type)){
-            response.status(201).end();
-            return;
-        } 
+        fetch(dbLink + "/api/classements/add", request);
         response.status(202).end();
     } else{
         response.status(400).end();
@@ -91,10 +96,7 @@ app.post('/api/classements/add', (request, response) => {
  */
 app.put('/api/classements/update', (request, response) => {
     if(request.body !== undefined){
-        if(db.update(request.body.content)){
-            response.status(200).end();
-            return;
-        }
+        fetch(dbLink + "/api/classements/update", request);
         response.status(202).end();
     } else{
         response.status(400).end();
@@ -111,10 +113,7 @@ app.put('/api/classements/update', (request, response) => {
 app.delete('/api/classements/delete/:type/:limit?', (request, response) => {
     if(request.params.type !== undefined){
         const limit = request.params.limit ? request.params.limit : 2;
-        if(db.delete(limit, request.params.type)){
-            response.status(200).end();
-            return;
-        }
+        fetch(dbLink + "/api/classements/delete/:type/:limit?", request);
         response.status(202).send();
     }
     response.status(400).end();
@@ -161,10 +160,7 @@ function authJwtToken(req, res, next){
  */
 app.put('/api/succes/add', authJwtToken ,(request, response) => {
     if(request.body !== undefined){
-        if(db.addSucces(request.body.user, request.body.succes)){
-            response.status(200).end();
-            return;
-        }
+        fetch(dbLink + "/api/succes/add", request);
         response.status(404).end();
     } else{
         response.status(400).end();
@@ -177,7 +173,7 @@ app.put('/api/succes/add', authJwtToken ,(request, response) => {
  */
 app.get('/api/succes/get/:user', authJwtToken, (request, response) => {
     if(request.params.user !== undefined){
-        response.status(200).json(db.getSucces(request.params.user));
+        fetch(dbLink + "/api/succes/get/:user", request).then( res => response.status(200).json(res));
     } else{
         response.status(400).end();
     }
