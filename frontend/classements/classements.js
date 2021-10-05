@@ -9,7 +9,10 @@ let count = 26;
 
 // au chargement de la page, on affiche les infos pour le premier onglet
 window.onload = function(){
-    update(1);
+    update(1).then(
+        () => console.log("test")
+    );
+   
 };
 
 // dès que l'on clique sur un des onglets, on appelle la fonction update
@@ -17,7 +20,8 @@ window.onload = function(){
 async function update(index){
     let content;
     // en fonction de la valeur on récupère les infos dans la db
-    // à différents endroits
+    // à différents endroits*
+    console.log("caca \n")
     switch(index){
         case 2: 
             content = await getContentClassement2();
@@ -33,6 +37,8 @@ async function update(index){
             break;
     }
     // on affiche le contenu retourné sur la page
+    
+    console.log(content[0]);
     var text1 = document.getElementById('text1');
     text1.innerHTML = content[0];
     var text2 = document.getElementById('text2');
@@ -70,10 +76,10 @@ async function getContentClassement1(){
     });
     // grâce au résultat, on retourne un tableau des 4 éléments à afficher
     var output = [];
-    output.push("1: Le " + array[0].key + ", " + array[0].value + " heures de retard");
-    output.push("2: Le " + array[1].key + ", " + array[1].value + " heures de retard");
-    output.push("3: Le " + array[2].key + ", " + array[2].value + " heures de retard");
-    output.push("4: Le " + array[3].key + ", " + array[3].value + " heures de retard");
+    output.push("1: Le " + array[0].message + ", " + array[0].occurence + " heures de retard");
+    output.push("2: Le " + array[1].message + ", " + array[1].occurence + " heures de retard");
+    output.push("3: Le " + array[2].message + ", " + array[2].occurence + " heures de retard");
+    output.push("4: Le " + array[3].message + ", " + array[3].occurence + " heures de retard");
     return output;
 } 
 
@@ -104,10 +110,11 @@ async function getContentClassement2(){
     });
 
     var output = [];
-    output.push("1: " + array[0].key + ", " + array[0].value + " fois");
-    output.push("2: " + array[1].key + ", " + array[1].value + " fois");
-    output.push("3: " + array[2].key + ", " + array[2].value + " fois");
-    output.push("4: " + array[3].key + ", " + array[3].value + " fois");
+    
+    output.push("1: " + array[0].message + ", " + array[0].occurence + " fois");
+    output.push("2: " + array[1].message + ", " + array[1].occurence + " fois");
+    output.push("3: " + array[2].message + ", " + array[2].occurence + " fois");
+    output.push("4: " + array[3].message + ", " + array[3].occurence + " fois");
     return output;
 }
 
@@ -137,10 +144,11 @@ async function getContentClassement3(){
     });
 
     var output = [];
-    output.push("1: " + array[0].key + ", annulé " + array[0].value + " fois");
-    output.push("2: " + array[1].key + ", annulé " + array[1].value + " fois");
-    output.push("3: " + array[2].key + ", annulé " + array[2].value + " fois");
-    output.push("4: " + array[3].key + ", annulé " + array[3].value + " fois");
+    console.log("HERE " + array );
+    output.push("1: " + array[0].message + ", annulé " + array[0].occurence + " fois");
+    output.push("2: " + array[1].message + ", annulé " + array[1].occurence + " fois");
+    output.push("3: " + array[2].message + ", annulé " + array[2].occurence + " fois");
+    output.push("4: " + array[3].message + ", annulé " + array[3].occurence + " fois");
     return output;
 }
 
@@ -170,10 +178,10 @@ async function getContentClassement4(){
     });
     
     var output = [];
-    output.push("1: La gare " + array[0].key + " compte " + array[0].value + " heures de retard");
-    output.push("2: La gare " + array[1].key + " compte " + array[1].value + " heures de retard");
-    output.push("3: La gare " + array[2].key + " compte " + array[2].value + " heures de retard");
-    output.push("4: La gare " + array[3].key + " compte " + array[3].value + " heures de retard");
+    output.push("1: La gare " + array[0].message + " compte " + array[0].occurence + " heures de retard");
+    output.push("2: La gare " + array[1].message + " compte " + array[1].occurence + " heures de retard");
+    output.push("3: La gare " + array[2].message + " compte " + array[2].occurence + " heures de retard");
+    output.push("4: La gare " + array[3].message + " compte " + array[3].occurence + " heures de retard");
     return output;
 }
 
@@ -183,7 +191,7 @@ async function addData(){
     // mais on sort un peu trop du backend alors on a juste mis un bouton pour ajouter en dur des infos
     let data = { 
         content : [
-            {key: "nouvelle entrée", value: count},
+            {message: "nouvelle entrée", occurence: count},
         ],
         type: "delay"
     };
@@ -238,10 +246,10 @@ async function deleteData(){
 async function updateData(){
     let data = {
         content : [
-            {key: "Mardi 34 Juin 2021", value: 87}, // remplace la valeur 58
-            {key: "Travaux sur les voies", value: 3781}, // remplace la valeur 3721
-            {key: "Geneve -> Grenoble", value: 2}, // remplace la valeur 1
-            {key: "Avigon Centre", value: 23} // remplace la valeur 9
+            {message: "Mardi 34 Juin 2021", occurence: 87}, // remplace la valeur 58
+            {message: "Travaux sur les voies", occurence: 3781}, // remplace la valeur 3721
+            {message: "Geneve -> Grenoble", occurence: 2}, // remplace la valeur 1
+            {message: "Avigon Centre", occurence: 23} // remplace la valeur 9
         ]
     };
     fetch('//localhost:8080/api/classements/update',
