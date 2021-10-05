@@ -1,24 +1,24 @@
-//Imports
-
 require('dotenv').config()
 
 const express = require('express');
-const db = require('./modules/database');
 const fs = require('fs');
 const bodyParser = require('body-parser');
 const jwt = require('jsonwebtoken');
 const { type } = require('os');
-const cors = require('cors');
+var cors = require('cors')
 
 let app = express();
 
-app.use(cors);
+app.use(cors());
+
+app.use(express.static('../frontend'));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({
   extended: true
 }));
 app.listen(8081);
 console.log('Server started');
+
 
 
 /* Route permettant de récuperer les "limit" éléments les plus intéréssant du fichier identifié par "type"

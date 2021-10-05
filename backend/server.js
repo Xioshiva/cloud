@@ -1,5 +1,3 @@
-//Imports
-
 require('dotenv').config()
 
 const express = require('express');
@@ -7,19 +5,21 @@ const fs = require('fs');
 const bodyParser = require('body-parser');
 const jwt = require('jsonwebtoken');
 const { type } = require('os');
-const cors = require('cors');
+var cors = require('cors')
+const fetch = require('cross-fetch');
 
 let app = express();
 
-app.use(cors);
-app.options('*', cors());
+app.use(cors());
 
+app.use(express.static('../frontend'));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({
   extended: true
 }));
 app.listen(8080);
 console.log('Server started');
+
 
 app.get('/api', function(request, response) {
     console.log("haha");
@@ -63,7 +63,12 @@ console.log("lol");
 app.get('/api/classements/:type/:limit?', (request, response) => {
     console.log("lol");
     if(request.params.type !== undefined){
-        fetch(dbLink + "/api/classements/:type/:limit?", request).then( res => response.status(200).json(res));
+        fetch(dbLink + "/api/classements/:type/:limit?", {
+            method: "POST",
+            body: request.body,
+            headers: {
+              "Content-Type": "application/json"
+            },}).then( res => response.status(200).json(res));
         
     } else{
         response.status(400).end();
