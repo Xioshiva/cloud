@@ -5,8 +5,8 @@ const fs = require('fs');
 const bodyParser = require('body-parser');
 const jwt = require('jsonwebtoken');
 const { type } = require('os');
-var cors = require('cors')
-
+const db = require("./modules/database.js");
+var cors = require('cors');
 let app = express();
 
 app.use(cors());
@@ -28,10 +28,8 @@ console.log('Server started');
  *                    -> 400 (Bad Request) 
  */
 app.get('/api/classements/:type/:limit?', (request, response) => {
-    console.log("lol");
     if(request.params.type !== undefined){
         const limit = request.params.limit ? request.params.limit : 4;
-        console.log(db.get(limit, request.params.type));
         response.status(200).json(db.get(limit, request.params.type));
     } else{
         response.status(400).end();

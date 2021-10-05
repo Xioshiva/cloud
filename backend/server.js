@@ -15,13 +15,13 @@ app.use(cors());
 app.use(express.static('../frontend'));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({
-  extended: true
+    extended: true
 }));
 app.listen(8080);
 console.log('Server started');
 
 
-app.get('/api', function(request, response) {
+app.get('/api', function (request, response) {
     console.log("haha");
     response.setHeader('Content-Type', 'text/plain');
     response.send(`
@@ -42,9 +42,8 @@ app.get('/api', function(request, response) {
 });
 
 
-var dbLink = "localhost:8081";
+var dbLink = "http://localhost:8081";
 
-console.log("lol");
 /* NOTES SUR LE PROJET:
  *   n'ayant pas fait de login pour la partie front, on a improvisé quelque chose en vitesse donc il n'est pas possible d'ajouter des utilisateurs
  *   les parties du frontend qui communiquent avec le backend sont les fichiers classement.js et succes.js
@@ -61,16 +60,20 @@ console.log("lol");
  *                    -> 400 (Bad Request) 
  */
 app.get('/api/classements/:type/:limit?', (request, response) => {
-    console.log("lol");
-    if(request.params.type !== undefined){
-        fetch(dbLink + "/api/classements/:type/:limit?", {
-            method: "POST",
-            body: request.body,
+    console.log(request.body);
+    if (request.params.type !== undefined) {
+        console.log(request.protocol);
+        fetch(dbLink + "/api/classements/" + request.params.type + "/" + request.params.limit, {
+            method: 'GET',
             headers: {
-              "Content-Type": "application/json"
-            },}).then( res => response.status(200).json(res));
-        
-    } else{
+                "Content-Type": "application/json"
+            },
+        }).then(res => {
+            res.json().then(yo => response.status(200).json(yo))
+
+        });
+
+    } else {
         response.status(400).end();
     }
 });
@@ -83,10 +86,14 @@ app.get('/api/classements/:type/:limit?', (request, response) => {
  *                    -> 400 (Bad Request) 
  */
 app.post('/api/classements/add', (request, response) => {
-    if(request.body.content !== undefined && request.body.type){
-        fetch(dbLink + "/api/classements/add", request);
+    if (request.body.content !== undefined && request.body.type) {
+        fetch(dbLink + "/api/classements/add", {
+            method: 'POST',
+            body: JSON.stringify(request.body),
+            headers: request.headers
+        });
         response.status(202).end();
-    } else{
+    } else {
         response.status(400).end();
     }
 });
@@ -100,10 +107,14 @@ app.post('/api/classements/add', (request, response) => {
  *                    -> 400 (Bad Request) 
  */
 app.put('/api/classements/update', (request, response) => {
-    if(request.body !== undefined){
-        fetch(dbLink + "/api/classements/update", request);
+    if (request.body !== undefined) {
+        fetch(dbLink + "/api/classements/update", {
+            method: 'PUT',
+            body: JSON.stringify(request.body),
+            headers: request.headers
+        });
         response.status(202).end();
-    } else{
+    } else {
         response.status(400).end();
     }
 });
@@ -116,9 +127,14 @@ app.put('/api/classements/update', (request, response) => {
  *                    -> 400 (Bad Request) 
  */
 app.delete('/api/classements/delete/:type/:limit?', (request, response) => {
-    if(request.params.type !== undefined){
+    if (request.params.type !== undefined) {
         const limit = request.params.limit ? request.params.limit : 2;
-        fetch(dbLink + "/api/classements/delete/:type/:limit?", request);
+        fetch(dbLink + "/api/classements/delete/" + request.params.type + "/" + limit, {
+            method: 'DELETE',
+            headers: {
+                "Content-Type": "application/json"
+            }
+        });
         response.status(202).send();
     }
     response.status(400).end();
@@ -129,9 +145,9 @@ app.delete('/api/classements/delete/:type/:limit?', (request, response) => {
 // ajouter la gestion des code de retour comme dans le fichier classements.js
 // touche pas trop aux classements stp ou en tout cas appuie pas sur supprimer
 let users = {
-    content:[
-        {username:"Thomas", password:"1234"},
-        {username:"Dorian", password:"prout"}
+    content: [
+        { username: "Thomas", password: "1234" },
+        { username: "Dorian", password: "prout" }
     ]
 }
 
@@ -145,15 +161,15 @@ let tokenSave;
  *                    -> 400 (Bad Request) 
  */
 
-function authJwtToken(req, res, next){
+function authJwtToken(req, res, next) {
     const authHeader = req.headers['authorization']
     const token = authHeader && authHeader.split(' ')[1]
-    
-    if(token == null || token != tokenSave) return res.sendStatus(401);
+
+    if (token == null || token != tokenSave) return res.sendStatus(401);
     jwt.verify(token, process.env.ACCESS_TOKEN_SECRET, (err, user) => {
-        if(err) return res.sendStatus(403);
+        if (err) return res.sendStatus(403);
         req.user = user;
-        
+
         next();
     });
 }
@@ -163,11 +179,11 @@ function authJwtToken(req, res, next){
  *                    -> 401 (Unauthorized) 
  *                    -> 400 (Bad Request) 
  */
-app.put('/api/succes/add', authJwtToken ,(request, response) => {
-    if(request.body !== undefined){
+app.put('/api/succes/add', authJwtToken, (request, response) => {
+    if (request.body !== undefined) {
         fetch(dbLink + "/api/succes/add", request);
         response.status(404).end();
-    } else{
+    } else {
         response.status(400).end();
     }
 });
@@ -177,9 +193,9 @@ app.put('/api/succes/add', authJwtToken ,(request, response) => {
  *                    -> 400 (Bad Request) 
  */
 app.get('/api/succes/get/:user', authJwtToken, (request, response) => {
-    if(request.params.user !== undefined){
-        fetch(dbLink + "/api/succes/get/:user", request).then( res => response.status(200).json(res));
-    } else{
+    if (request.params.user !== undefined) {
+        fetch(dbLink + "/api/succes/get/" + request.params.user, request).then(res => response.status(200).json(res));
+    } else {
         response.status(400).end();
     }
 });
@@ -201,15 +217,15 @@ app.delete('/api/succes/logout', (request, response) => {
  */
 app.post('/api/succes/login', (request, response) => {
 
-    for(let i = 0; i < users.content.length; i++){
-        if(request.body.username == users.content[i].username && request.body.password == users.content[i].password){
+    for (let i = 0; i < users.content.length; i++) {
+        if (request.body.username == users.content[i].username && request.body.password == users.content[i].password) {
             const username = request.body.username;
-            const user = {name: username};
+            const user = { name: username };
             // Le token exprire dans 5 minutes
-            const accessToken = jwt.sign(user, process.env.ACCESS_TOKEN_SECRET, {expiresIn: '5m'});
+            const accessToken = jwt.sign(user, process.env.ACCESS_TOKEN_SECRET, { expiresIn: '5m' });
             tokenSave = accessToken
-            response.status(200).json({accessToken: accessToken}).end();
-            
+            response.status(200).json({ accessToken: accessToken }).end();
+
         }
     }
     response.status(403).end()
