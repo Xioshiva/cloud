@@ -1,17 +1,20 @@
+// valeurs à modifier
+let address = "localhost";
+let port = "8080";
+
 // header utilisé pour les appels vers l'api rest
 const myHeader = new Headers({
-    'Access-Control-Allow-Origin': 'http://localhost:8080',
+    'Access-Control-Allow-Origin': 'http://'+address+':'+port,
     'Accept': 'application/json',
     'Content-Type': 'application/json'
 });
 
 let count = 26;
 
+
 // au chargement de la page, on affiche les infos pour le premier onglet
 window.onload = function(){
-    update(1).then(
-        () => console.log("test")
-    );
+    update(1);
    
 };
 
@@ -36,8 +39,6 @@ async function update(index){
             break;
     }
     // on affiche le contenu retourné sur la page
-    console.log("test");
-    console.log(content[0]);
     var text1 = document.getElementById('text1');
     text1.innerHTML = content[0];
     var text2 = document.getElementById('text2');
@@ -56,7 +57,7 @@ async function getContentClassement1(){
     document.getElementById('podium4').style.display = "none";
     let array;
     // on indique vouloir faire le get sur les délais et on veut 4 valeurs
-    await fetch('//localhost:8080/api/classements/delay/4',
+    await fetch('//'+address+':'+port+'/api/classements/delay/4',
     {
         headers : myHeader,
         method: 'GET'
@@ -90,9 +91,8 @@ async function getContentClassement2(){
     document.getElementById('podium4').style.display = "none";
 
     let array;
-    console.log("lol");
 
-    await fetch('//localhost:8080/api/classements/excuses/4',
+    await fetch('//'+address+':'+port+'/api/classements/excuses/4',
     {
         headers : myHeader,
         method: 'GET'
@@ -107,10 +107,7 @@ async function getContentClassement2(){
             var status = document.getElementById('status');
             status.innerHTML = "";
         }
-    });
-
-    console.log("ixdé");
-    
+    });    
 
     var output = [];
     
@@ -129,7 +126,7 @@ async function getContentClassement3(){
     document.getElementById('podium4').style.display = "none";
 
     let array;
-    await fetch('//localhost:8080/api/classements/journey/4',
+    await fetch('//'+address+':'+port+'/api/classements/journey/4',
     {
         headers : myHeader,
         method: 'GET'
@@ -147,7 +144,6 @@ async function getContentClassement3(){
     });
 
     var output = [];
-    console.log("HERE " + array );
     output.push("1: " + array[0].key + ", annulé " + array[0].value + " fois");
     output.push("2: " + array[1].key + ", annulé " + array[1].value + " fois");
     output.push("3: " + array[2].key + ", annulé " + array[2].value + " fois");
@@ -163,7 +159,7 @@ async function getContentClassement4(){
     document.getElementById('podium4').style.display = "block";
     
     let array;
-    await fetch('//localhost:8080/api/classements/station/4',
+    await fetch('//'+address+':'+port+'/api/classements/station/4',
     {
         headers : myHeader,
         method: 'GET'
@@ -200,7 +196,7 @@ async function addData(){
     };
     count += Math.round(Math.random() * 7);
 
-    fetch('//localhost:8080/api/classements/add',
+    fetch('//'+address+':'+port+'/api/classements/add',
     {
         headers : myHeader,
         method : 'POST',
@@ -225,7 +221,7 @@ async function addData(){
 // attention: on peut supprimer autant d'élément que l'on veut tant qu'il en reste minimum 4 après le delete
 async function deleteData(){
     // ici on fait le delete uniquement pour les délais (le fonctionnement est le meme pour les autres)
-    fetch('//localhost:8080/api/classements/delete/delay/2',
+    fetch('//'+address+':'+port+'/api/classements/delete/delay/2',
     {
         headers : myHeader,
         method: 'DELETE'
@@ -255,7 +251,7 @@ async function updateData(){
             {key: "Avigon Centre", value: 23} // remplace la valeur 9
         ]
     };
-    fetch('//localhost:8080/api/classements/update',
+    fetch('//'+address+':'+port+'/api/classements/update',
     {
         headers : myHeader,
         method : 'PUT',

@@ -21,8 +21,10 @@ app.listen(8080);
 console.log('Server started');
 
 
+// valeur à modifier
+var dbLink = "http://localhost:8081";
+
 app.get('/api', function (request, response) {
-    console.log("haha");
     response.setHeader('Content-Type', 'text/plain');
     response.send(`
     Voici l'API REST CRUD de Dorian et Thomas exposée par le backend sur /api/
@@ -37,17 +39,6 @@ app.get('/api', function (request, response) {
 });
 
 
-var dbLink = "http://localhost:8081";
-
-/* NOTES SUR LE PROJET:
- *   n'ayant pas fait de login pour la partie front, on a improvisé quelque chose en vitesse donc il n'est pas possible d'ajouter des utilisateurs
- *   les parties du frontend qui communiquent avec le backend sont le fichiers classement.js
- *   la base de données est composée de fichiers json (voir backend/db) sur lesquels on peut appliquer toutes les propriétés CRUD
- *   le code qui permet d'interagir avec la base de données se situe dans backend/modules/database.js
- */
-
-
-
 /* Route permettant de récuperer les "limit" éléments les plus intéréssant du fichier identifié par "type"
  * "limit" étant optionnel, on le remplace par 4 s'il n'est pas renseigné
  * "type" fait référence au ficher json du dossier backend/db dans lequel on veut aller chercher l'info
@@ -55,9 +46,7 @@ var dbLink = "http://localhost:8081";
  *                    -> 400 (Bad Request) 
  */
 app.get('/api/classements/:type/:limit?', (request, response) => {
-    console.log(request.body);
     if (request.params.type !== undefined) {
-        console.log(request.protocol);
         fetch(dbLink + "/api/classements/" + request.params.type + "/" + request.params.limit, {
             method: 'GET',
             headers: {
@@ -140,27 +129,4 @@ let users = {
         { username: "Thomas", password: "1234" },
         { username: "Dorian", password: "prout" }
     ]
-}
-
-//permet d'avoir plusieurs utilisateur en simultané mais cela n'est pas utilisé
-let tokenSave;
-
-/* Lorsque que une route est appellée cette fonction permet de vérifier que 
- * la requête contient un token et que celui est valide 
- * valeurs de retour: -> next() (OK)
- *                    -> 401 (Unauthorized) 
- *                    -> 400 (Bad Request) 
- */
-
-function authJwtToken(req, res, next) {
-    const authHeader = req.headers['authorization']
-    const token = authHeader && authHeader.split(' ')[1]
-
-    if (token == null || token != tokenSave) return res.sendStatus(401);
-    jwt.verify(token, process.env.ACCESS_TOKEN_SECRET, (err, user) => {
-        if (err) return res.sendStatus(403);
-        req.user = user;
-
-        next();
-    });
 }
