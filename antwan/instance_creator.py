@@ -22,7 +22,7 @@ db = exo.compute.create_instance(name="db",
                                  type=exo.compute.get_instance_type("tiny"),
                                  template=db_template,
                                  security_groups=[exo.compute.get_security_group(
-                                     id="a11894a1-6818-4ad7-ac08-8b33ded3d120")],
+                                     id="7b753335-3cc7-4979-a8b0-4e79ca51f706")],
                                  user_data="""
                             #cloud-config
                             runcmd:
