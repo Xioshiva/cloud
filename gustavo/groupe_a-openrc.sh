@@ -32,7 +32,7 @@ export OS_USERNAME="gustavo.pertuzati@etu.hesge.ch"
 #
 echo "Enter your SWITCHengines API credentials for project $OS_PROJECT_NAME as user $OS_USERNAME: "
 read -sr API_KEY_INPUT
-export OS_PASSWORD=a3c39d5b872141ec3ea5331782ec460e
+export OS_PASSWORD="a3c39d5b872141ec3ea5331782ec460e"
 # If your configuration has multiple regions, we set that information here.
 export OS_REGION_NAME="ZH"
 # Don't leave a blank variable, unset it if it was empty
