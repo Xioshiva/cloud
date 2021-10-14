@@ -2,7 +2,8 @@
 ## Dependencies
 To compile the report on an ubuntu based OS, you need the following package:
 * texlive-latex-base
-Aand to compile it, you will need to use the following command:
+
+To compile it, you will need to use the following command:
 ```
 pdflatex path_to_file
 ```
