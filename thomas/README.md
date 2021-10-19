@@ -1,12 +1,7 @@
+Pour lancer le programme:
 
-à la racine:
-
-virtualenv thomas
-
-activate thomas/bin/activate
-
-cd thomas
-
+source bin/activate
 pip install -r requirements.txt
-
 python3 startup.py
+
+tester le programme sur internet: IP_FRONTEND:8000
