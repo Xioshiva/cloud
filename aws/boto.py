@@ -37,12 +37,12 @@ try:
     db_ip_address = ""
 
     # en fonction de l'id de l'instance récupérer
-    # on récupèrel'ip correspondante 
+    # on récupère l'ip correspondante 
     instances = ec2.instances.filter(
         Filters=[{'Name': 'instance-state-name', 'Values': ['running']}])
     for instance in instances:
         if( instance_id == instance.id):
-            print(instance.id, instance.instance_type,instance.public_ip_address)
+            print("db :" + instance.id, instance.instance_type,instance.public_ip_address)
             db_ip_address = instance.public_ip_address
 
     # Création de l'instance de backend
@@ -83,7 +83,7 @@ try:
         Filters=[{'Name': 'instance-state-name', 'Values': ['running']}])
     for instance in instances:
         if( backend_id == instance.id):
-            print(instance.id, instance.instance_type,instance.public_ip_address)
+            print("backend :" + instance.id, instance.instance_type,instance.public_ip_address)
             backend_ip_address = instance.public_ip_address
 
     instanceFront = ec2.create_instances(
@@ -105,10 +105,19 @@ try:
             - python3 -m http.server
         """
     )
+    front_id = instanceFront[0].id
     
     inst = ec2.Instance(id=front_id)
     inst.wait_until_running()
 
+    # en fonction de l'id de l'instance récupérer
+    # on récupèrel'ip correspondante 
+    instances = ec2.instances.filter(
+        Filters=[{'Name': 'instance-state-name', 'Values': ['running']}])
+    for instance in instances:
+        if( front_id == instance.id):
+            print("frontend :" + instance.id, instance.instance_type,instance.public_ip_address)
+            backend_ip_address = instance.public_ip_address
 
 
 except Exception as e:
